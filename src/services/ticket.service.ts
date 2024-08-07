@@ -1,5 +1,5 @@
 import { prisma } from '../config/prismaClient'
-
+import { pagination } from '../utils/pagination'
 interface TicketCreation {
 	title: string
 	description: string
@@ -49,17 +49,21 @@ export const createTicketService = async ({
 export const getTicketsService = async ({
 	status,
 	creatorId,
+	page = 1,
+	pageSize = 2,
 }: {
 	status?: string
 	creatorId?: number
+	page?: number
+	pageSize?: number
 }) => {
 	try {
-		const tickets = await prisma.ticket.findMany({
-			where: {
-				status,
-				creatorId,
-			},
-		})
+		const where = {
+			status,
+			creatorId,
+		}
+
+		const tickets = await pagination(prisma.ticket, page, pageSize, where)
 		return tickets
 	} catch (error) {
 		throw error
