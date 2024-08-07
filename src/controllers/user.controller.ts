@@ -69,16 +69,21 @@ export const createUser = async (
 }
 
 export const getUsers = async (
-	req: Request<{}, {}, {}, { email?: string; role?: string }>,
+	req: Request<
+		{},
+		{},
+		{},
+		{ email?: string; role?: string; page?: number; pageSize?: number }
+	>,
 	res: Response
 ) => {
 	try {
-		const { email, role } = req.query
+		const { email, role, page, pageSize } = req.query
 		if (email) {
 			const user = await getUserService(email)
 			return res.json(user)
 		}
-		const users = await getUsersService(role)
+		const users = await getUsersService(role, page, pageSize)
 		res.json(users)
 	} catch (error) {
 		return handleErrors(error, res)

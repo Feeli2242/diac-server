@@ -1,5 +1,6 @@
 import { prisma } from '../config/prismaClient'
 import { pagination } from '../utils/pagination'
+
 interface TicketCreation {
 	title: string
 	description: string
@@ -13,7 +14,8 @@ enum Status {
 	CERRADO = 'cerrado',
 }
 
-const validateStatus = (status: string) => {
+const validateStatus = (status?: string) => {
+	if (!status) return true
 	const esPendiente = status === Status.PENDIENTE
 	const esProceso = status === Status.PROCESO
 	const esCerrado = status === Status.CERRADO
@@ -65,6 +67,48 @@ export const getTicketsService = async ({
 
 		const tickets = await pagination(prisma.ticket, page, pageSize, where)
 		return tickets
+	} catch (error) {
+		throw error
+	}
+}
+
+export const updateTicketService = async ({
+	ticketId,
+	description,
+	status,
+	title,
+}: {
+	ticketId: number
+	title?: string
+	description?: string
+	status?: string
+}) => {
+	try {
+		const esStatusValido = validateStatus(status)
+		if (!esStatusValido)
+			throw new Error(
+				'El estado del ticket debe ser: pendiente | en_proceso | cerrado '
+			)
+		const updated = prisma.ticket.update({
+			data: {
+				title,
+				description,
+				status,
+			},
+			where: { id: ticketId },
+		})
+		return updated
+	} catch (error) {
+		throw error
+	}
+}
+
+export const deleteTicketService = async (ticketId: number) => {
+	try {
+		await prisma.ticket.delete({
+			where: { id: ticketId },
+		})
+		return true
 	} catch (error) {
 		throw error
 	}

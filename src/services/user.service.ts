@@ -1,5 +1,6 @@
 import { prisma } from '../config/prismaClient'
 import { encript } from '../utils/encriptPass'
+import { pagination } from '../utils/pagination'
 import { toCapitalize } from '../utils/stringParser'
 
 export const createUserService = async ({
@@ -14,7 +15,7 @@ export const createUserService = async ({
 	roleId: number
 }) => {
 	try {
-		await prisma.user.create({
+		const newUser = await prisma.user.create({
 			data: {
 				password: encript(password),
 				email: email.toLowerCase(),
@@ -22,6 +23,7 @@ export const createUserService = async ({
 				roleId,
 			},
 		})
+		return newUser
 	} catch (error) {
 		throw error
 	}
@@ -47,27 +49,17 @@ export const getUserService = async (email: string) => {
 	}
 }
 
-export const getUsersService = async (roleName?: string) => {
-	let role = roleName && {
-		where: {
-			role: { name: roleName },
-		},
-	}
+export const getUsersService = async (
+	roleName?: string,
+	page = 1,
+	pageSize = 10
+) => {
 	try {
-		const user = await prisma.user.findMany({
-			orderBy: {
-				name: 'asc',
-			},
-			include: {
-				role: true,
-				assignedTickets: true,
-				comments: true,
-				tickets: true,
-				attachments: true,
-			},
-			...role,
-		})
-		return user
+		const where = {
+			role: { name: roleName },
+		}
+		const users = pagination(prisma.user, page, pageSize, where)
+		return users
 	} catch (error) {
 		throw error
 	}
@@ -112,6 +104,7 @@ export const deleteUserService = async (id: number) => {
 				id,
 			},
 		})
+		return true
 	} catch (error) {
 		throw error
 	}
