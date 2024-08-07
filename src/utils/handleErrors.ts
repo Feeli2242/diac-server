@@ -47,8 +47,8 @@ export const handleErrors = (error: any, res: Response) => {
 		// Generic error
 		res.status(500).json({
 			error: {
-				message: 'Ups, algo falló.',
-				details: (error as Error).message,
+				message: (error as Error).message,
+				details: error,
 			},
 		})
 	}

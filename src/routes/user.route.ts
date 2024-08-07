@@ -5,11 +5,10 @@ import {
 	getUsers,
 	updateUser,
 } from '../controllers/user.controller'
-import { verifyToken } from '../middlewares/verifyToken'
 
 const route = Router()
 
-route.get('/', verifyToken, getUsers)
+route.get('/', getUsers)
 route.post('/', createUser)
 route.put('/', updateUser)
 route.delete('/:id', deleteUser)
