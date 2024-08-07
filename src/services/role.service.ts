@@ -15,7 +15,7 @@ export const createRoleService = async (name: string) => {
 	}
 }
 
-export const getRole = async (name: string) => {
+export const getRoleService = async (name: string) => {
 	try {
 		const findRole = await prisma.role.findFirst({
 			where: {
@@ -23,6 +23,15 @@ export const getRole = async (name: string) => {
 			},
 		})
 		return findRole
+	} catch (error) {
+		throw error
+	}
+}
+
+export const getRolesService = async () => {
+	try {
+		const findRoles = await prisma.role.findMany()
+		return findRoles
 	} catch (error) {
 		throw error
 	}
