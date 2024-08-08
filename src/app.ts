@@ -8,6 +8,7 @@ const app = express()
 app.use(
 	cors({
 		origin: '*',
+		exposedHeaders: ['auth'],
 	})
 )
 app.use(morgan('dev'))
