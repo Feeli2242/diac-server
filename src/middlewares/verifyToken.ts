@@ -12,7 +12,6 @@ export const verifyToken = async (
 		if (!auth) throw new Error('Ruta protegida')
 		const oldToken = auth as string
 		const newToken = await validateToken(oldToken)
-		console.log({ oldToken, newToken })
 		res.setHeader('auth', newToken)
 		next()
 	} catch (error) {

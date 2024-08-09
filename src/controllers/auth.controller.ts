@@ -20,3 +20,14 @@ export const loginUser = async (
 		return handleErrors(error, res)
 	}
 }
+
+export const verifyTokenController = async (
+	req: Request<{}, {}, { email: string; password: string }, {}>,
+	res: Response
+) => {
+	try {
+		return res.json({ success: true })
+	} catch (error) {
+		return handleErrors(error, res)
+	}
+}
